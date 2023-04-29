@@ -33,3 +33,8 @@
   <li>Alarm Screen: In this screen, we can set the alarm time by using two buttons</li>
   <li>Alarm On Screen: In this screen, we show the current time and a dissmis button. The buzzer will go off at the same time. This screen will be on when you set the alarm time for.</li>
 </ul>
+<img
+  src="/path/to/img.jpg"
+  alt="Main"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
