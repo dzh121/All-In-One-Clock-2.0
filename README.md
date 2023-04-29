@@ -29,12 +29,35 @@
 <ul>
 <li>Main Screen: On this screen, we can find the current time and date, the temperature, and an icon that shows the weather. Also, we have the buttons for all of the other screens. </li>
   <li>Forecast Screen: In this screen, we can see the forecast for the current day, tomorrow, and the day after tomorrow. For each day, there is an icon and a minimum and maximum temperature. </li>
-  <li>Temprture screen: In this screen, we have a lot of information that includes: temperature, humidity, pressure, UV, wind speed, Feels like</li>
+  <li>Temperature screen: In this screen, we have a lot of information that includes: temperature, humidity, pressure, UV, wind speed, Feels like</li>
   <li>Alarm Screen: In this screen, we can set the alarm time by using two buttons</li>
   <li>Alarm On Screen: In this screen, we show the current time and a dissmis button. The buzzer will go off at the same time. This screen will be on when you set the alarm time for.</li>
 </ul>
-<img
-  src="/path/to/img.jpg"
+<div class="flex-container">
+  <img
+  src="/Images/main.jpg"
   alt="Main"
-  title="Optional title"
-  style="display: inline-block; margin: 0 auto; max-width: 300px">
+  title="Main"
+  style="display: inline-block; margin: 0 auto; width: 200px; highet: 200px">
+  <img
+  src="/Images/forecast.jpg"
+  alt="Forecast"
+  title="Forecast"
+  style="display: inline-block; margin: 0 auto; width: 200px; highet: 200px">
+  <img
+  src="/Images/temp.jpg"
+  alt="Temperature"
+  title="Temperature"
+  style="display: inline-block; margin: 0 auto; width: 200px; highet: 200px">
+  <img
+  src="/Images/alarm.jpg"
+  alt="Alarm"
+  title="Alarm"
+  style="display: inline-block; margin: 0 auto; width: 200px; highet: 200px">
+  <img
+  src="/Images/Alarm On.jpg"
+  alt="Alarm On"
+  title="Alarm On"
+  style="display: inline-block; margin: 0 auto; width: 200px; highet: 200px">
+</div>
+
