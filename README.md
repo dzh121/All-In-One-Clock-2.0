@@ -21,8 +21,18 @@
 <pre>temperature = doc.containsKey(\"tw\") ? doc[\"tw\"] : temperature;</pre>
 <p>In this example, the Arduino will read the incoming data, and if the data has the keyword "tw"(it will be encoded as JSON) then the data will be saved in the temperature variable. </p>
 <p>I also sent the image number and Day/Night but how will I show the image? Well, on the SD Card that is connected to the screen, there are two folders of all the images from day/night as bmp(bit map images). So I go to the SD Card and show the image by number or time. </p>
-
 <p>In this project, I show icons in two ways. The first is by using a .h script, which is faster, but I can't have a lot of images like that because it takes a lot of MB. The second way is by using the SD card. </p>
+<h1>Dashboard:</h1>
+<p>The Arduino IoT Cloud allows us to use a dashboard. What is a dashboard? is a way for me to see the data from anywhere and on any device. 
+In the dashboard, there are a lot of widgets; we will use some to show the data. We will use the button widget to have a button that will update the temperature (usually for debugging) and a couple of other widgets to show the data (temperature, humidity, pressure, and time). </p>
+<img
+  src="/Images/dashboard.png"
+  alt="Dashboard"
+  title="Dashboard"
+  style="display: inline-block; margin: 0 auto; width: 500px; highet: 500px">
+<h1>Fonts:</h1>
+<p>I used a couple of extra fonts that I will include in the download files.</p>
+
 <h1>The screen:</h1>
 <p>I am using a 3.5-inch TFT screen; this is a touch screen. To use it, I am using the MCUFRIEND_kbv library. </p>
 <p>We have 5 different screens; let's go through them one by one: </p>
@@ -60,4 +70,18 @@
   title="Alarm On"
   style="display: inline-block; margin: 0 auto; width: 200px; highet: 200px">
 </div>
-
+<h1>Connections:</h1>
+<p>In this project we don't connect a lot of thing but we do connect some: <p>
+<ul>
+  <li>Connect both Arduino's Using ISP. From the rp2040 A4-D21 and A5-D20</li>
+  <li>From the mega 5v to RP2040 VIN</li>
+  <li>From the mega gnd to RP2040 GND</li>
+  <li>From the mega 5v to vcc buzzer</li>
+  <li>From the mega gnd to gnd buzzer</li>
+  <li>From the mega D44 to buzzer </li>
+</ul>
+<img
+  src="/Images/schem.png"
+  alt="Schematics"
+  title="Schematics"
+  style="display: inline-block; margin: 0 auto; width: 400px; highet: 400px">
