@@ -209,6 +209,7 @@ void loop() {
     canBeOnDelay = true;
     alarmScreenShown = false;
   }
+  
 }
 void mainScreen(){
   bool down = Touch_getXY();
@@ -221,6 +222,7 @@ void mainScreen(){
     currentScreen = TEMP;
     back_button.drawButton(false);
     tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
+    reloadTemp = false;
     defaultTemp();
     return;
   }
@@ -241,6 +243,7 @@ void mainScreen(){
     tft.fillScreen(BLACK);
     currentScreen = FORECAST;
     back_button.drawButton(false);
+    reloadForecast = true;
     defaultForecast();
     tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
     showBMP("/arrow_up_icon.bmp", 10, 160);
@@ -257,7 +260,6 @@ void mainScreen(){
     return;
   }
   //image+temp
-  
   if(reloadTempImage){
     tft.fillRect(15,0,100,120,BLACK);
     displayImage(timeOfDayForImageToday,imageNumber,15,50);
@@ -458,6 +460,7 @@ void displayImage(String timeOfDay,int imageNumber, int x, int y) {
 }
 
 void defaultForecast(){
+  Serial.println(tommorowIcon);
   tft.setTextColor(WHITE);
   tft.setFont(&FreeSans15pt7b);
   tft.setTextSize(1); 
