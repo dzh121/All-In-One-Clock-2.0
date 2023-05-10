@@ -1,5 +1,16 @@
 <h1>All-In-One-Clock-2.0</h1>
-
+<img
+  src="/Images/main.jpg"
+  alt="Main"
+  title="Main"
+  style="display: inline-block; margin: 0 auto; width: 500px; highet: 500px">
+<h1>Components</h1>
+ <ul>
+ <li><a href="https://store.arduino.cc/products/arduino-mega-2560-rev3">Arduino MEGA</a></li>
+ <li><a href="https://store.arduino.cc/products/arduino-nano-rp2040-connect-with-headers">Arduino Nano RP2040 Connect</a></li>
+ <li><a href="https://www.amazon.de/Kuman-Screen-Socket-Arduino-Function/dp/B075CXXL1M/ref=sr_1_2?ie=UTF8&qid=1536594279&sr=8-2&keywords=3.5+tft+display+arduino">3.5 TFT Touch Screen with SD Card Socket for Arduino</a></li>
+ <li><a href="https://www.aliexpress.com/item/4000785325910.html?spm=a2g0o.productlist.0.0.61923f7cS5MI2w&algo_pvid=d52a4127-5191-45e6-bb08-5a729bccddbb&algo_exp_id=d52a4127-5191-45e6-bb08-5a729bccddbb-4&pdp_ext_f=%7B%22sku_id%22%3A%2210000007816863808%22%7D&pdp_pi=-1%3B0.69%3B-1%3B-1%40salePrice%3BUSD%3Bsearch-mainSearch">Buzzer</a></li>
+ </ul>
 <p>This is the second version of my old project: https://projecthub.arduino.cc/dzh121/0523b70f-0366-4fb2-8a01-0ca57f40c54d\. </p>
 <p>This project will have similar functions but have a touch screen and more information. </p>
 <h1>Project Goals: </h1>
@@ -85,3 +96,9 @@ In the dashboard, there are a lot of widgets; we will use some to show the data.
   alt="Schematics"
   title="Schematics"
   style="display: inline-block; margin: 0 auto; width: 400px; highet: 400px">
+  
+<h1>Box:</h1>
+<p>There is an extra 3d model for the box I used for the screen. </p>
+<h1>Arduino Project Hub:</h1>
+<p>You can find The prject in <a href="">The Arduino project Hub</a> </p>
+
