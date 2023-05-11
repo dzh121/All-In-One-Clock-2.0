@@ -11,7 +11,7 @@
  <li><a href="https://www.amazon.de/Kuman-Screen-Socket-Arduino-Function/dp/B075CXXL1M/ref=sr_1_2?ie=UTF8&qid=1536594279&sr=8-2&keywords=3.5+tft+display+arduino">3.5 TFT Touch Screen with SD Card Socket for Arduino</a></li>
  <li><a href="https://www.aliexpress.com/item/4000785325910.html?spm=a2g0o.productlist.0.0.61923f7cS5MI2w&algo_pvid=d52a4127-5191-45e6-bb08-5a729bccddbb&algo_exp_id=d52a4127-5191-45e6-bb08-5a729bccddbb-4&pdp_ext_f=%7B%22sku_id%22%3A%2210000007816863808%22%7D&pdp_pi=-1%3B0.69%3B-1%3B-1%40salePrice%3BUSD%3Bsearch-mainSearch">Buzzer</a></li>
  </ul>
-<p>This is the second version of my old project: https://projecthub.arduino.cc/dzh121/0523b70f-0366-4fb2-8a01-0ca57f40c54d\. </p>
+<p>This is the second version of my old project: https://projecthub.arduino.cc/dzh121/0523b70f-0366-4fb2-8a01-0ca57f40c54d. </p>
 <p>This project will have similar functions but have a touch screen and more information. </p>
 <h1>Project Goals: </h1>
 <ul>
@@ -26,7 +26,7 @@
 <p> we have an Arduino that is connected to the internet, but how will we get the information? Well, let's divide the information we need into two categories: </p>
 <ul>
     <li>Time: To get the time, it's very simple because, while you are connected to the internet, you can get the Unix timestamp. The Unix timestamp is a way to count the time. How does it do it? It will count every second since January 1, 1970. For example, the time while writing it is "1682760531". To convert this time, I will use a library that will convert this time to a more readable time (hours, minutes, year, month, etc.). </li>
-    <li>Temperature: To get the temperature, we will use something called an API. In short, an API is some kind of server that, when I "call it" I get JSON information back. For example, go to this link to use the NASA API that shows you the international space station location right now. http://api.open-notify.org/iss-now.json . For this project, I will use https://www.weatherapi.com\"\u003ehttps://www.weatherapi.com. This API will have a lot of information for this project, but I will only use some of it because the Arduino cannot get so much information (we are talking about 20000 characters), so in the API settings, i changed it to only get some of the information. The API will also give me an image link, for example, cdn.weatherapi.com/weather/64x64/day/116.png. To get the image, I need to do a couple of things: get the image number, and determine if it's day or night. </li>
+    <li>Temperature: To get the temperature, we will use something called an API. In short, an API is some kind of server that, when I "call it" I get JSON information back. For example, go to this link to use the NASA API that shows you the international space station location right now. http://api.open-notify.org/iss-now.json . For this project, I will use https://www.weatherapi.com. This API will have a lot of information for this project, but I will only use some of it because the Arduino cannot get so much information (we are talking about 20000 characters), so in the API settings, i changed it to only get some of the information. The API will also give me an image link, for example, https://cdn.weatherapi.com/weather/64x64/day/116.png. To get the image, I need to do a couple of things: get the image number, and determine if it's day or night. </li>
 </ul>
 <p>All of the information mentioned above will be sent through the ISP. The Arduino will get it and decode it</p>
 <pre>temperature = doc.containsKey(\"tw\") ? doc[\"tw\"] : temperature;</pre>
