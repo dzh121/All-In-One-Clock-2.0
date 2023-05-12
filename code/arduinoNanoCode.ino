@@ -30,24 +30,24 @@
 
 
 // Set up WiFi network credentials
-const char* ssid = "SSID";
-const char* password = "PASSWORD";
+const char* ssid = "ssid";
+const char* password = "password";
 
 const char* host = "api.weatherapi.com";
 const int port = 80;
 
 // Your API key
-const char* apiKey = "KEY";
+const char* apiKey = "key";
 
 WiFiClient wifiClient;
 HttpClient client = HttpClient(wifiClient, host, port);
 
-unsigned long previousMillis = 0;        // will store last time LED was updated
+unsigned long previousMillis = 0;       
 // constants won't change:
 const long interval = 300000; //5 min
 // const long interval = 5000; //5 sec
 
-unsigned long previousMillis1 = 0;        // will store last time LED was updated
+unsigned long previousMillis1 = 0;        
 // constants won't change:
 const long interval1 = 30000; //30 sec
 
@@ -60,9 +60,17 @@ void setup() {
   delay(1000);
   WiFi.begin(ssid, password);
   
+  int failedAttempts = 0;
   while (WiFi.status() != WL_CONNECTED) {
+    if (failedAttempts >= 5) {
+      Serial.println("Failed to connect to WiFi. Resetting...");
+      delay(2000);
+      NVIC_SystemReset(); // Reset the Arduino RP2040
+    }
+
     delay(1000);
     Serial.println("Connecting to WiFi...");
+    failedAttempts++;
   }
   
   Serial.println("Connected to WiFi");
