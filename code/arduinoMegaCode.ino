@@ -2,11 +2,11 @@
 #include <MCUFRIEND_kbv.h>
 #include <TouchScreen.h>
 #include <FreeDefaultFonts.h>
-#include "FreeSans20pt7b.h"
-#include "FreeSans15pt7b.h"
-#include "FreeSans10pt7b.h"
-#include "FreeSans5pt7b.h"
-#include <digital20pt7b.h>
+#include "./fonts/FreeSans20pt7b.h"
+#include "./fonts/FreeSans15pt7b.h"
+#include "./fonts/FreeSans10pt7b.h"
+#include "./fonts/FreeSans5pt7b.h"
+#include "./fonts/digital20pt7b.h"
 #include <SoftwareSerial.h>
 #include "icons.h"
 #include <ArduinoJson.h>
@@ -243,7 +243,7 @@ void mainScreen(){
     tft.fillScreen(BLACK);
     currentScreen = FORECAST;
     back_button.drawButton(false);
-    reloadForecast = true;
+    reloadForecast = false;
     defaultForecast();
     tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
     showBMP("/arrow_up_icon.bmp", 10, 160);
