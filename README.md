@@ -21,6 +21,7 @@
   <li>Full temperature info (pressure, humidity, etc..) </li>
   <li>Forecast 3 days (today, tomorrow, and the day after tomorrow) </li>
   <li>Current weather Icon </li>
+  <br>
   <li>Timer</li>
 </ul>
 <p>To be able to do all of this, we will need a connection to the internet. I chose for this project to use the Arduino RP2040 Connect. To use the RP2040, I will be using the https://create.arduino.cc/iot/\"\u003ehttps://create.arduino.cc/iot This official Arduino tool is very easy to use, and it's great for using the internet across multiple devices. </p> 
