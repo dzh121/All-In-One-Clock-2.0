@@ -21,6 +21,7 @@
   <li>Full temperature info (pressure, humidity, etc..) </li>
   <li>Forecast 3 days (today, tomorrow, and the day after tomorrow) </li>
   <li>Current weather Icon </li>
+  <li>Timer</li>
 </ul>
 <p>To be able to do all of this, we will need a connection to the internet. I chose for this project to use the Arduino RP2040 Connect. To use the RP2040, I will be using the https://create.arduino.cc/iot/\"\u003ehttps://create.arduino.cc/iot This official Arduino tool is very easy to use, and it's great for using the internet across multiple devices. </p> 
 <p> we have an Arduino that is connected to the internet, but how will we get the information? Well, let's divide the information we need into two categories: </p>
@@ -52,7 +53,7 @@ In the dashboard, there are a lot of widgets; we will use some to show the data.
   <li>Forecast Screen: In this screen, we can see the forecast for the current day, tomorrow, and the day after tomorrow. For each day, there is an icon and a minimum and maximum temperature. </li>
   <li>Temperature screen: In this screen, we have a lot of information that includes: temperature, humidity, pressure, UV, wind speed, Feels like</li>
   <li>Alarm Screen: In this screen, we can set the alarm time by using two buttons</li>
-  <li>Alarm On Screen: In this screen, we show the current time and a dissmis button. The buzzer will go off at the same time. This screen will be on when you set the alarm time for.</li>
+  <li>Timer Screen: On this screen, we have a timer display where you can set the desired time and start the countdown.</li>
 </ul>
 <div class="flex-container">
   <img
@@ -76,9 +77,9 @@ In the dashboard, there are a lot of widgets; we will use some to show the data.
   title="Alarm"
   style="display: inline-block; margin: 0 auto; width: 200px; highet: 200px">
   <img
-  src="/Images/Alarm On.jpg"
-  alt="Alarm On"
-  title="Alarm On"
+  src="/Images/timer.jpg"
+  alt="Timer"
+  title="Timer"
   style="display: inline-block; margin: 0 auto; width: 200px; highet: 200px">
 </div>
 <h1>Connections:</h1>
