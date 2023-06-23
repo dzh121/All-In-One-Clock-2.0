@@ -67,6 +67,17 @@ int tommorow1Icon;
 int alarmHours = 20;
 int alarmMinutes = 0;
 
+int timerMinutes = 0;
+int timerSec = 0;
+
+int oldM;
+int oldS;
+bool timerOn = false;
+bool downTime = false;
+int M;
+int S;
+unsigned long CountDown_start;
+
 int oldDayMM;
 
 bool alarmOn = false;
@@ -84,14 +95,15 @@ enum Screen {
   ALARM,
   TEMP,
   FORECAST,
-  ALARM_ACTIVE
+  ALARM_ACTIVE,
+  TIMER
 };
 
 Screen currentScreen = MAIN;
 
 MCUFRIEND_kbv tft;
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
-Adafruit_GFX_Button temp_button, alarm_button, back_button, forecast_button, hour_up, minutes_up,dismissButton;
+Adafruit_GFX_Button temp_button, alarm_button, back_button, forecast_button, hour_up, minutes_up,dismissButton,timer_button, timerMinuteAdd_button, timerSecAdd_button,timerSecMinus_button,timerMinuteMinus_button, timerStart_button, timerClear_Button,timer5_button,timer10_button,timer15_button;
 
 #define BLACK   0x0000
 #define BLUE    0x001F
@@ -104,13 +116,29 @@ Adafruit_GFX_Button temp_button, alarm_button, back_button, forecast_button, hou
 #define GRAY    0x8410
 
 bool canBeOnDelay = true;
+bool canBeOnDelayTimer = true;
 int buzzer = 44;
 bool alarmScreenShown = false;
+bool timerScreenShown = false;
 bool reloadTempImage = false;
 bool wasScreenBack = true;
+bool wasScreenBackTimer = true;
 unsigned long previousMillisAlarm = 0;
+
+unsigned long previousMillisTimer = 0;
+
+unsigned long previousMillis = 0; 
+const long interval = 1000;
+
+unsigned long previousMillisAutoOffTimer = 0;
+unsigned long intervalAutoOffTimer = 30000; 
+
 const long intervalAlarm = 2500; 
+
+bool timerSoundOn = false;
+
 bool soundOn = false;
+int counter = 0;
 
 int pixel_x, pixel_y;
 bool Touch_getXY(void)
@@ -147,6 +175,8 @@ bool Touch_getXY(void)
 
 void receiveEvent(int numBytes);
 
+
+
 void setup() {
   Serial.begin(9600);
   bool good = SD.begin(SD_CS);
@@ -162,32 +192,72 @@ void setup() {
   tft.setRotation(Orientation );
   tft.fillScreen(BLACK);
 
-  forecast_button.initButton(&tft, 382, 262, 150, 100, BLACK, BLACK, BLACK, "", 1);
-  temp_button.initButton(&tft, 232, 262, 150, 100, BLACK, BLACK, BLACK, "", 1);
-  alarm_button.initButton(&tft, 82, 262, 150, 100, BLACK, BLACK, BLACK, "", 1); 
+  alarm_button.initButton(&tft, 52, 262, 120, 100, BLACK, BLACK, BLACK, "", 1); 
+  timer_button.initButton(&tft, 177, 262, 120, 100, BLACK, BLACK, BLACK, "", 1);
+  temp_button.initButton(&tft, 302, 262, 120, 100, BLACK, BLACK, BLACK, "", 1); 
+  forecast_button.initButton(&tft, 427, 262, 120, 100, BLACK, BLACK, BLACK, "", 1);
+  
   back_button.initButton(&tft, 430, 40, 96, 96, BLACK, BLACK, BLACK, "", 1);
   
-  hour_up.initButton(&tft, 150, 230, 96, 96, WHITE, WHITE, WHITE, "", 2);
-  minutes_up.initButton(&tft, 270, 230, 96, 96, WHITE, WHITE, WHITE, "", 2);
-  dismissButton.initButton(&tft, 235, 245, 211, 92, BLACK, BLACK, BLACK, "", 2);
+  timerMinuteAdd_button.initButton(&tft, 185, 40, 75, 75, BLACK, BLACK, BLACK, "", 1);
+  timerSecAdd_button.initButton(&tft, 305, 40, 75, 75, BLACK, BLACK, BLACK, "", 1);
+  timerMinuteMinus_button.initButton(&tft, 185, 190, 75, 75, BLACK, BLACK, BLACK, "", 1);
+  timerSecMinus_button.initButton(&tft, 305, 190, 75, 75, BLACK, BLACK, BLACK, "", 1);
+  timerClear_Button.initButton(&tft, 70, 110, 75, 75, BLACK, BLACK, BLACK, "", 1);
+  timerStart_button.initButton(&tft, 430, 155, 75, 75, BLACK, BLACK, BLACK, "", 1);
+
+  timer5_button.initButton(&tft, 150, 280, 75, 75, BLACK, BLACK, BLACK, "", 1);
+  timer10_button.initButton(&tft, 250, 280, 75, 75, BLACK, BLACK, BLACK, "", 1);
+  timer15_button.initButton(&tft, 350, 280, 75, 75, BLACK, BLACK, BLACK, "", 1);
+
+  hour_up.initButton(&tft, 150, 230, 96, 96, WHITE, WHITE, WHITE, "", 1);
+  minutes_up.initButton(&tft, 270, 230, 96, 96, WHITE, WHITE, WHITE, "", 1);
+  dismissButton.initButton(&tft, 235, 245, 211, 92, BLACK, BLACK, BLACK, "", 1);
+
   
   forecast_button.drawButton(false);
   temp_button.drawButton(false);
   alarm_button.drawButton(false);
-
+  timer_button.drawButton(false);
   defualtMain();  
+  
 }
 
 void loop() {
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    if(timerOn && downTime){ 
+      if(timerSec-1 < 0){
+        if(timerMinutes >= 1){
+          timerMinutes-=1;
+          timerSec = 59;
+        }
+      }else if (timerMinutes == 0 && timerSec == 0) {
+        downTime = false;
+      }else{
+        timerSec--;
+      }
+      if(currentScreen == TIMER &&(timerMinutes >= 0 && timerSec > 0)){
+        display_new_timer();
+      }
+    }
+  }
+  if(timerMinutes <= 0 && timerSec <= 0){
+    timerSec = 0;
+    timerMinutes = 0;
+  }
+  
   if((alarmHours != hours || alarmMinutes != minutes) &&!wasScreenBack) {
     wasScreenBack = true;
     noTone(buzzer);
     tft.fillScreen(BLACK);
     defualtMain();
   }
-  
   if(alarmHours == hours && alarmMinutes == minutes && canBeOnDelay && currentScreen != ALARM){
     alarmActivesScreen();
+  }else if(timerMinutes == 0 && timerSec == 0 && timerOn){
+    timerActivesScreen();
   }else{
     switch(currentScreen) {
       case MAIN:
@@ -202,6 +272,9 @@ void loop() {
       case FORECAST:
           forecastScreen();
           break;
+      case TIMER:
+        timerScreen();
+        break;
     }    
   }
   
@@ -216,12 +289,14 @@ void mainScreen(){
   temp_button.press(down && temp_button.contains(pixel_x, pixel_y));
   alarm_button.press(down && alarm_button.contains(pixel_x, pixel_y));
   forecast_button.press(down && forecast_button.contains(pixel_x, pixel_y));
+  timer_button.press(down && timer_button.contains(pixel_x, pixel_y));
   if(temp_button.justPressed()){
     tft.fillScreen(BLACK);
     Serial.println("pressed temp");
     currentScreen = TEMP;
     back_button.drawButton(false);
-    tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
+    // tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
+    showBMP("/home.bmp", 390, 5);
     reloadTemp = false;
     defaultTemp();
     return;
@@ -235,7 +310,6 @@ void mainScreen(){
     hour_up.drawButton(false);
     minutes_up.drawButton(false);
     defaultAlarm();
-    
     return;
   }
   if(forecast_button.justPressed()){
@@ -245,7 +319,8 @@ void mainScreen(){
     back_button.drawButton(false);
     reloadForecast = false;
     defaultForecast();
-    tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
+    // tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
+    showBMP("/home.bmp", 390, 5);
     showBMP("/arrow_up_icon.bmp", 10, 160);
     showBMP("/arrow_down_icon.bmp", 10, 200);
     showBMP("/rainChanceIcon.bmp", 10, 240);
@@ -257,6 +332,36 @@ void mainScreen(){
     showBMP("/arrow_up_icon.bmp", 250, 160);
     showBMP("/arrow_down_icon.bmp", 250, 200);
     showBMP("/rainChanceIcon.bmp", 250, 240);  
+    return;
+  }
+  if(timer_button.justPressed()){
+    Serial.println("pressed timer");
+    tft.fillScreen(BLACK);
+    currentScreen = TIMER;
+    tft.setFont(&FreeSans15pt7b); 
+    back_button.drawButton(false);    
+    timerMinuteAdd_button.drawButton(false);
+    timerSecAdd_button.drawButton(false);
+    timerMinuteMinus_button.drawButton(false);
+    timerSecMinus_button.drawButton(false);
+    timerStart_button.drawButton(false);
+    timerClear_Button.drawButton(false);
+    timer5_button.drawButton(false);
+    timer10_button.drawButton(false);
+    timer15_button.drawButton(false);
+
+    showBMP("/home.bmp", 390, 5);
+    showBMP("/timerIcon/minus.bmp", 155, 155);
+    showBMP("/timerIcon/add.bmp", 155, 10);
+    showBMP("/timerIcon/minus.bmp", 275, 155);
+    showBMP("/timerIcon/add.bmp", 275, 10);
+    showBMP("/timerIcon/play.bmp", 400, 125);
+    showBMP("/timerIcon/restart.bmp", 40, 80);
+    showBMP("/timerIcon/number-5.bmp", 120, 250);
+    showBMP("/timerIcon/number-10.bmp", 220, 250);
+    showBMP("/timerIcon/number-15.bmp", 320, 250);
+
+    display_new_timer();
     return;
   }
   //image+temp
@@ -418,7 +523,209 @@ void alarmActivesScreen(){
   }
   
 }
+void timerScreen(){
+  bool down = Touch_getXY();
+  back_button.press(down && back_button.contains(pixel_x, pixel_y));
+  timerMinuteAdd_button.press(down && timerMinuteAdd_button.contains(pixel_x, pixel_y));
+  timerSecAdd_button.press(down && timerSecAdd_button.contains(pixel_x, pixel_y));
+  timerMinuteMinus_button.press(down && timerMinuteMinus_button.contains(pixel_x, pixel_y));
+  timerSecMinus_button.press(down && timerSecMinus_button.contains(pixel_x, pixel_y));
+  timerStart_button.press(down && timerStart_button.contains(pixel_x, pixel_y));
+  timerClear_Button.press(down && timerClear_Button.contains(pixel_x, pixel_y));
+  timer5_button.press(down && timer5_button.contains(pixel_x, pixel_y));
+  timer10_button.press(down && timer10_button.contains(pixel_x, pixel_y));
+  timer15_button.press(down && timer15_button.contains(pixel_x, pixel_y));
 
+  if(back_button.justPressed()){
+    Serial.println("pressed back");
+    tft.fillScreen(BLACK);
+    currentScreen = MAIN;
+    defualtMain();
+    return;
+  }
+  if(timerClear_Button.justPressed()){
+    if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }
+    timerSec = 0;
+    timerMinutes = 0;
+    tft.fillRect(140,85,200,65,BLACK);
+    tft.setFont(&digital20pt7b);
+    tft.setTextColor(GREEN);
+    tft.setCursor(155, 140);
+    tft.setTextSize(2); 
+    tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+  }
+  if(timerMinuteAdd_button.justPressed()){
+   if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }
+    timerMinutes = (timerMinutes + 1)% 100;
+    tft.fillRect(140,85,200,65,BLACK);
+    tft.setFont(&digital20pt7b);
+    tft.setTextColor(GREEN);
+    tft.setCursor(155, 140);
+    tft.setTextSize(2); 
+    tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+  }
+  if(timerMinuteMinus_button.justPressed()){
+   if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }
+    if(timerMinutes > 0){
+      timerMinutes -= 1;
+    }
+    tft.fillRect(140,85,200,65,BLACK);
+    tft.setFont(&digital20pt7b);
+    tft.setTextColor(GREEN);
+    tft.setCursor(155, 140);
+    tft.setTextSize(2); 
+    tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+  }
+  if(timerSecAdd_button.justPressed()){
+    if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }
+    timerSec = (timerSec + 1)% 60;
+    tft.fillRect(140,85,200,65,BLACK);
+    tft.setFont(&digital20pt7b);
+    tft.setTextColor(GREEN);
+    tft.setCursor(155, 140);
+    tft.setTextSize(2); 
+    tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+  }
+  if(timerSecMinus_button.justPressed()){
+    if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }
+    if(timerSec > 0){
+      timerSec -= 1;
+    }
+    tft.fillRect(140,85,200,65,BLACK);
+    tft.setFont(&digital20pt7b);
+    tft.setTextColor(GREEN);
+    tft.setCursor(155, 140);
+    tft.setTextSize(2); 
+    tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+  }
+  if(timerStart_button.justPressed()){
+    if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }else{
+      CountDown_start = millis();
+      timerOn = true;
+      downTime = true;
+      showBMP("/timerIcon/pause.bmp", 400, 125);
+    }
+    delay(500);
+  }
+  if(timer5_button.justPressed()){
+    if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }
+    timerSec = 0;
+    timerMinutes = 5;
+    tft.fillRect(140,85,200,65,BLACK);
+    tft.setFont(&digital20pt7b);
+    tft.setTextColor(GREEN);
+    tft.setCursor(155, 140);
+    tft.setTextSize(2); 
+    tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+  }
+  if(timer10_button.justPressed()){
+    if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }
+    timerSec = 0;
+    timerMinutes = 10;
+    tft.fillRect(140,85,200,65,BLACK);
+    tft.setFont(&digital20pt7b);
+    tft.setTextColor(GREEN);
+    tft.setCursor(155, 140);
+    tft.setTextSize(2); 
+    tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+  }
+  if(timer15_button.justPressed()){
+    if(timerOn){
+      showBMP("/timerIcon/play.bmp", 400, 125);
+      timerOn = false;
+    }
+    timerSec = 0;
+    timerMinutes = 15;
+    tft.fillRect(140,85,200,65,BLACK);
+    tft.setFont(&digital20pt7b);
+    tft.setTextColor(GREEN);
+    tft.setCursor(155, 140);
+    tft.setTextSize(2); 
+    tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+  }
+  
+}
+void timerActivesScreen(){
+   if (!timerScreenShown) {
+    tft.fillScreen(BLACK);
+    defaultTimerActive();
+    timerScreenShown = true;
+  }
+    
+  unsigned long currentMillisTimer = millis();
+  if (currentMillisTimer - previousMillisTimer >= intervalAlarm) {
+    previousMillisTimer = currentMillisTimer;
+    if(soundOn){
+      soundOn = false;
+      noTone(buzzer);
+    }else{
+      soundOn = true;
+      analogWrite(buzzer, 200);
+    }
+  }
+  unsigned long currentMillisAutoOffTimer = millis();
+  if (currentMillisAutoOffTimer - previousMillisAutoOffTimer >= intervalAutoOffTimer) {
+    previousMillisAutoOffTimer = currentMillisAutoOffTimer;
+    if(counter >= 1){
+      counter = 0;
+      tft.fillScreen(BLACK);
+      currentScreen = MAIN;
+      noTone(buzzer);
+      defualtMain();
+      timerOn = false;
+      timerScreenShown = false;
+    }
+    counter++;
+  }
+  bool down = Touch_getXY();
+  dismissButton.press(down && dismissButton.contains(pixel_x, pixel_y));
+  if(dismissButton.justPressed()){
+    Serial.println("pressed dismiss");
+    currentScreen = MAIN;
+    counter = 0;
+    noTone(buzzer);
+    timerOn = false;
+    timerSec = 0;
+    timerMinutes = 0;
+    timerScreenShown = false;
+    tft.fillScreen(BLACK);
+    defualtMain();
+    return;
+  }
+  
+}
+void display_new_timer(){
+  tft.fillRect(140,85,200,65,BLACK);
+  tft.setFont(&digital20pt7b);
+  tft.setTextColor(GREEN);
+  tft.setCursor(155, 140);
+  tft.setTextSize(2); 
+  tft.print(String(timerMinutes/10)+String(timerMinutes%10)+":"+String(timerSec/10)+String(timerSec%10));
+}
 String getDayOfWeek(int dayOfWeek) {
   String dayName; // Initialize empty string for day name
   if(dayOfWeek > 7){
@@ -500,9 +807,15 @@ void defaultForecast(){
 }
 void defualtMain(){
   tft.fillScreen(BLACK);
-  tft.drawRGBBitmap(50, 230, alarmIcon, 64, 64);
-  tft.drawRGBBitmap(200, 230, tempIcon, 64, 64);
-  tft.drawRGBBitmap(350, 230, forecastIcon, 64, 64);
+  // showBMP("/timer.bmp", 145, 230);
+  // tft.drawRGBBitmap(20, 230, alarmIcon, 64, 64);
+  showBMP("/clock.bmp", 20, 230);
+  showBMP("/timer.bmp", 145, 230);
+  showBMP("/temperature.bmp", 270, 230);
+  // tft.drawRGBBitmap(270, 230, tempIcon, 64, 64);
+  showBMP("/forecast.bmp", 395, 230);
+  // tft.drawRGBBitmap(395, 230, forecastIcon, 64, 64);
+  
   displayImage(timeOfDayForImageToday,imageNumber,15,50);
   tft.fillRect(15,0,150,50,BLACK);
   tft.setFont(&FreeSans15pt7b); 
@@ -602,7 +915,8 @@ void defaultAlarm(){
     tft.setFont(&FreeSans20pt7b);
     tft.setTextSize(2); 
     tft.print("M");
-    tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
+    // tft.drawRGBBitmap(390, 5, homeScreen, 80, 80);
+    showBMP("/home.bmp", 390, 5);
     tft.setTextColor(WHITE);
     tft.setFont(&FreeSans15pt7b);
     tft.setTextSize(1); 
@@ -619,11 +933,28 @@ void defaultAlarmActive(){
   tft.setTextSize(1); 
   tft.setTextColor(WHITE);
   tft.setFont(&FreeSans20pt7b); 
-  tft.drawRGBBitmap(180, 20, alarmIcon, 64, 64);
+  // tft.drawRGBBitmap(180, 20, alarmIcon, 64, 64);
+  showBMP("/clock.bmp", 180, 20);
   tft.setCursor(150,140);
   tft.print("ALARM");
   tft.setCursor(150,200);
   tft.print(String(alarmHours/10)+String(alarmHours%10)+":"+String(alarmMinutes/10)+String(alarmMinutes%10));
+  tft.fillRect(150,220,174,48,WHITE);
+  tft.fillRect(153,223,168,42,BLACK);
+  tft.setCursor(156, 255);
+  tft.print("DISMISS");
+
+}
+void defaultTimerActive(){
+  dismissButton.drawButton(false);
+  tft.setTextSize(1); 
+  tft.setTextColor(WHITE);
+  tft.setFont(&FreeSans20pt7b); 
+  // tft.drawRGBBitmap(180, 20, alarmIcon, 64, 64);
+  showBMP("/timer.bmp", 180, 20);
+  tft.setCursor(150,140);
+  tft.print("TIMER");
+  tft.setCursor(150,200);
   tft.fillRect(150,220,174,48,WHITE);
   tft.fillRect(153,223,168,42,BLACK);
   tft.setCursor(156, 255);
