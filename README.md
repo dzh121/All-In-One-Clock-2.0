@@ -102,5 +102,5 @@ In the dashboard, there are a lot of widgets; we will use some to show the data.
 <h1>Box:</h1>
 <p>There is an extra 3d model for the box I used for the screen. </p>
 <h1>Arduino Project Hub:</h1>
-<p>You can find The prject in <a href="">The Arduino project Hub</a> </p>
+<p>You can find The prject in <a href="https://projecthub.arduino.cc/dzh121/all-in-one-clock-20-e16d7a">The Arduino project Hub</a> </p>
 
