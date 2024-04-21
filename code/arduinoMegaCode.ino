@@ -216,16 +216,16 @@ struct Timer
     showBMP("/timerIcon/play.bmp", 400, 125);
     state = TIMER_STOPPED;
   }
-  void addMinute()
+  void addMinute(int x)
   {
     if (state = TIMER_RUNNING)
     {
       state = TIMER_STOPPED;
       showBMP("/timerIcon/play.bmp", 400, 125);
     }
-    minutes = (minutes + 1) % 100;
+    minutes = (minutes + x) % 100;
   }
-  void subtractMinute()
+  void subtractMinute(int x)
   {
     if (state = TIMER_RUNNING)
     {
@@ -234,19 +234,19 @@ struct Timer
     }
     if (minutes > 0)
     {
-      minutes--;
+      minutes-=x;
     }
   }
-  void addSecond()
+  void addSecond(int x)
   {
     if (state = TIMER_RUNNING)
     {
       state = TIMER_STOPPED;
       showBMP("/timerIcon/play.bmp", 400, 125);
     }
-    seconds = (seconds + 1) % 60;
+    seconds = (seconds + x) % 60;
   }
-  void subtractSecond()
+  void subtractSecond(int x)
   {
     if (state = TIMER_RUNNING)
     {
@@ -255,7 +255,7 @@ struct Timer
     }
     if (seconds > 0)
     {
-      seconds--;
+      seconds-=x;
     }
   }
   void setTime(int minutesIn, int secondsIn)
@@ -667,22 +667,22 @@ void timerScreen()
   }
   if (timerMinuteAdd_button.justPressed())
   {
-    timer.addMinute();
+    timer.addMinute(1);
     display_new_timer();
   }
   if (timerMinuteMinus_button.justPressed())
   {
-    timer.subtractMinute();
+    timer.subtractMinute(1);
     display_new_timer();
   }
   if (timerSecAdd_button.justPressed())
   {
-    timer.addSecond();
+    timer.addSecond(1);
     display_new_timer();
   }
   if (timerSecMinus_button.justPressed())
   {
-    timer.subtractSecond();
+    timer.subtractSecond(1);
     display_new_timer();
   }
   if (timerStart_button.justPressed())
@@ -699,17 +699,17 @@ void timerScreen()
   }
   if (timer5_button.justPressed())
   {
-    timer.setTime(5, 0);
+    timer.addMinute(5);
     display_new_timer();
   }
   if (timer10_button.justPressed())
   {
-    timer.setTime(10, 0);
+    timer.addMinute(10);
     display_new_timer();
   }
   if (timer15_button.justPressed())
   {
-    timer.setTime(15, 0);
+    timer.addMinute(15);
     display_new_timer();
   }
 }
@@ -1086,7 +1086,7 @@ void receiveEvent(int numBytes)
 }
 
 #define BMPIMAGEOFFSET 54
-#define BUFFPIXEL 40
+#define BUFFPIXEL 120
 uint16_t read16(File &f)
 {
   uint16_t result; // read little-endian
@@ -1258,3 +1258,4 @@ uint8_t showBMP(char *nm, int x, int y)
   bmpFile.close();
   return (ret);
 }
+
